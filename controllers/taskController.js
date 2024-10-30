@@ -1,11 +1,19 @@
 const Task = require('../models/taskModels')
+const Cookies = require('cookie-parser')
+const jwt = require('jsonwebtoken');
 
 //CREATE TASK 
 exports.addTask = async (req, res) => {
+    const { token } = req.cookies;
+    const decodedData = jwt.verify(
+        token,
+        '4c237a2c708361e111344ddb246f813130f1cf5b06f73c6766e472a561aaaeb7',
+    )
     const createTask = new Task({
-        task: req.body.task
+        task: req.body.task,
+        user_id:decodedData.id
     });
-    
+
     try {
         const newTask = await createTask.save();
         res.status(201).json(newTask);
@@ -18,12 +26,21 @@ exports.addTask = async (req, res) => {
 // GET ALL TASKS
 exports.getTask = async (req, res) => {
     try {
-        const getAllTask = await Task.find().sort({ updatedAt: -1 });
+        const { token } = req.cookies;
+        const decodedData = jwt.verify(
+            token,
+            '4c237a2c708361e111344ddb246f813130f1cf5b06f73c6766e472a561aaaeb7',
+        )
+        const user_id = decodedData.id
+
+        const getAllTask = await Task.find( { user_id } ).sort({ updatedAt: -1 });
         res.json(getAllTask);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
 };
+
+
 
 // DELETE ALL TASKS
 exports.deleteAllTasks = async (req, res) => {

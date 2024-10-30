@@ -10,6 +10,7 @@ router.delete('/deleteAllTasks',taskController.deleteAllTasks);
 router.put('/updateTask/:id',taskController.updateTask);
 router.delete('/deleteTaskByID/:id',taskController.deleteTaskByID);
 
+//auth routes
 router.post('/signup', authController.signUp);
 router.post('/login', authController.login);
 
